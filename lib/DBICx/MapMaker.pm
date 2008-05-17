@@ -121,7 +121,7 @@ __END__
 
 =head1 NAME
 
-DBICx::MapMaker - automatically create a mapping table
+DBICx::MapMaker - automatically create a DBIx::Class mapping table
 
 =head1 SYNOPSIS
 
@@ -131,21 +131,22 @@ the "right table" may point to many rows in the "left table".  This
 module automatically creates a L<DBIx::Class|DBIx::Class> result
 source for that table, and sets up the six necessary relationships.
 
-Here's how to use it.  Imagine you have a table called C<MySchema::A>
-and C<MySchema::B>, each with a primary key.  To create the mapping
-table, you'll write a module like this:
+Here's how to use it.  Imagine you have some tables called
+C<MySchema::A> and C<MySchema::B>, each with a primary key, that you'd
+like to join.  To create the mapping table, you'll write a module like
+this:
 
   package MySchema::MapAB;
   use DBICx::MapMaker;
   use base 'DBIx::Class';
-  
+
   my $map = DBICx::MapMaker->new(
       left_class  => 'MySchema::A',
       right_class => 'MySchema::B',
       left_name   => 'a',
       right_name  => 'b',
   );
-    
+
   $map->setup_table(__PACKAGE__);
 
 Then, you can:
