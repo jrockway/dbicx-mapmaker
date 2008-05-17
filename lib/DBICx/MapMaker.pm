@@ -1,6 +1,8 @@
 package DBICx::MapMaker;
 use Moose;
-use Moose::Util::TypeConstraints;
+
+our $VERSION   = '0.01';
+our $AUTHORITY = 'CPAN:JROCKWAY';
 
 # avoid clogging up our methods
 my $other = sub { return 'right' if shift eq 'left'; return 'left' };
