@@ -1,21 +1,13 @@
 use strict;
 use warnings;
-use Test::More tests => 2;
+use Test::More tests => 12;
 use DBICx::TestDatabase;
 use ok 'DBICx::MapMaker';
 
-{ package MySchema;
-  use strict;
-  use warnings;
-  use base 'DBIx::Class::Schema';
-  __PACKAGE__->load_classes;
-  
-  1;
-
-  package MySchema::A;
+{ package MySchema::A;
   use base 'DBIx::Class';
   __PACKAGE__->load_components('Core');
-  __PACKAGE__->table('A');
+  __PACKAGE__->table('a');
   __PACKAGE__->add_columns(
       id  => { data_type => 'INTEGER' },
       foo => { data_type => 'TEXT' },
@@ -40,14 +32,38 @@ use ok 'DBICx::MapMaker';
       left_class  => 'MySchema::A',
       right_class => 'MySchema::B',
   
-      left_name   => 'as',
-      right_name  => 'bs',
+      left_name   => 'a',
+      right_name  => 'b',
   );
     
   $map->setup_table(__PACKAGE__);
+
+  package MySchema;
+  use strict;
+  use warnings;
+  use base 'DBIx::Class::Schema';
+  __PACKAGE__->load_classes(qw/A B MapAB/);
 }
 
 $INC{'MySchema.pm'} = 1;
 
-my $db = DBICx::TestDatabase->new('MySchema');
-ok $db, 'deployed db ok';
+my $schema = DBICx::TestDatabase->new('MySchema');
+ok $schema, 'deployed db ok';
+
+$schema->resultset('A')->create({ foo => 'a1' });
+$schema->resultset('B')->create({ foo => 'b1' });
+$schema->resultset('MapAB')->create({ a => 1, b => 1 });
+
+my $a = $schema->resultset('A')->find(1);
+ok $a;
+ok $a->b_map;
+ok $a->bs;
+is $a->b_map->count, '1';
+is [$a->bs]->[0]->foo, 'b1';
+
+my $b = $schema->resultset('B')->find(1);
+ok $b;
+ok $b->a_map;
+ok $b->as;
+is $b->a_map->count, '1';
+is [$b->as]->[0]->foo, 'a1';
