@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More tests => 16;
 use DBICx::TestDatabase;
 use ok 'DBICx::MapMaker';
 
@@ -9,7 +9,7 @@ use ok 'DBICx::MapMaker';
   __PACKAGE__->load_components('Core');
   __PACKAGE__->table('a');
   __PACKAGE__->add_columns(
-      id  => { data_type => 'INTEGER' },
+      id  => { data_type => 'INTEGER', is_auto_increment => 1 },
       foo => { data_type => 'TEXT' },
   );
   __PACKAGE__->set_primary_key('id');
@@ -19,7 +19,7 @@ use ok 'DBICx::MapMaker';
   __PACKAGE__->load_components('Core');
   __PACKAGE__->table('b');
   __PACKAGE__->add_columns(
-      id  => { data_type => 'INTEGER' },
+      id  => { data_type => 'INTEGER', is_auto_increment => 1 },
       foo => { data_type => 'TEXT' },
   );
   __PACKAGE__->set_primary_key('id');
@@ -60,6 +60,7 @@ ok $a->b_map;
 ok $a->bs;
 is $a->b_map->count, '1';
 is [$a->bs]->[0]->foo, 'b1';
+is $a->column_info('id')->{'is_auto_increment'}, 1;
 
 my $b = $schema->resultset('B')->find(1);
 ok $b;
@@ -67,3 +68,8 @@ ok $b->a_map;
 ok $b->as;
 is $b->a_map->count, '1';
 is [$b->as]->[0]->foo, 'a1';
+is $b->column_info('id')->{'is_auto_increment'}, 1;
+
+my $map = $schema->resultset('MapAB')->find({ a => 1, b => 1 });
+isnt $map->column_info('a')->{'is_auto_increment'}, 1;
+isnt $map->column_info('b')->{'is_auto_increment'}, 1;

@@ -1,7 +1,7 @@
 package DBICx::MapMaker;
 use Moose;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.02';
 our $AUTHORITY = 'CPAN:JROCKWAY';
 
 # avoid clogging up our methods
@@ -86,13 +86,10 @@ sub setup_table {
 
     # NOTE:
     # we never want auto-incrementing
-    # in a maping table, so remove it
-    # - SL
-    delete $_->{is_auto_increment} for ($l_info, $r_info);
-
+    # in a mapping table, so explicitly disable it
     $class->add_columns(
-        $left_name  => { %$l_info, is_nullable => 0, },
-        $right_name => { %$r_info, is_nullable => 0, },
+        $left_name  => { %$l_info, is_auto_increment => 0, is_nullable => 0, },
+        $right_name => { %$r_info, is_auto_increment => 0, is_nullable => 0, },
     );
     $class->set_primary_key($left_name, $right_name);
 
@@ -217,11 +214,13 @@ The name of the created mapping table.
 Optional.  Defaults to "map_C<left_name>_C<right_name>".  (With C<foo>
 and C<bar>, C<map_foo_bar>.)
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Jonathan Rockway C<< <jrockway@cpan.org> >>
 
 Stevan Little C<< <stevan.little@iinteractive.com> >>
+
+Adam Herzog C<< <adam@adamherzog.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 
