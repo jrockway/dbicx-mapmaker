@@ -1,7 +1,8 @@
 package DBICx::MapMaker;
+# ABSTRACT: automatically create a DBIx::Class mapping table
 use Moose;
 
-our $VERSION   = '0.02';
+our $VERSION;
 our $AUTHORITY = 'CPAN:JROCKWAY';
 
 # avoid clogging up our methods
@@ -15,7 +16,6 @@ for my $direction (qw/left right/){
         is       => 'ro',
         isa      => 'Str',
         required => 1,
-        coerce   => 1,
     );
 
     has "${direction}_name" => (
@@ -117,10 +117,6 @@ sub setup_table {
 1;
 
 __END__
-
-=head1 NAME
-
-DBICx::MapMaker - automatically create a DBIx::Class mapping table
 
 =head1 SYNOPSIS
 
