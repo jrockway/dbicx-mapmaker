@@ -1,3 +1,6 @@
+{{$NEXT}}
+        - fix faulty use of coercion
+
 0.01    Sat May 17 18:09:52 JST 2008
         - initial release (note the time zone)
 
