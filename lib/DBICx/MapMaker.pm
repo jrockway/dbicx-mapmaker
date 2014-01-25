@@ -1,6 +1,7 @@
 package DBICx::MapMaker;
 # ABSTRACT: automatically create a DBIx::Class mapping table
 use Moose;
+use Class::Load;
 
 our $VERSION;
 our $AUTHORITY = 'CPAN:JROCKWAY';
@@ -69,7 +70,7 @@ has tablename => (
 sub BUILD {
     my $self = shift;
     for my $class (map { $self->$_ } qw/left_class right_class/){
-        Class::MOP::load_class($class);
+        Class::Load::load_class($class);
     }
 }
 
